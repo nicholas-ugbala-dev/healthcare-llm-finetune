@@ -132,7 +132,7 @@ The notebook loads the model, runs inference on 5 test questions, and saves outp
 
 Technical writeup of Week 1 (setup, model loading, quantization, tokenization, baseline results) is published on dev.to:
 
-[Fine-Tuning Llama 3.2 3B on Medical QA: Week 1 Setup and Baseline Inference] (link)
+[Fine-Tuning Llama 3.2 3B on Medical QA: Week 1 Setup and Baseline Inference](https://dev.to/sarko07/fine-tuning-llama-32-3b-on-medical-qa-week-1-setup-and-baseline-inference-3k25)
 
 Each week will have a corresponding article documenting the decisions made and what the results showed.
 

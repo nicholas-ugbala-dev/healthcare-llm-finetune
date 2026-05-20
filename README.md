@@ -142,4 +142,4 @@ Each week will have a corresponding article documenting the decisions made and w
 
 I am Nicholas Ugbala, a full-stack software engineer with production experience in healthtech and AI integration. This project is part of a deliberate skill-building track toward AI/ML engineering roles.
 
-If you want to follow the build: [dev.to article series link] or connect on LinkedIn: [https://www.linkedin.com/in/nicholas-ugbala/]
+If you want to follow the build: [dev.to article series link](https://dev.to/sarko07/fine-tuning-llama-32-3b-on-medical-qa-week-1-setup-and-baseline-inference-3k25) or connect on LinkedIn: [Nicholas Ugbala](https://www.linkedin.com/in/nicholas-ugbala/)

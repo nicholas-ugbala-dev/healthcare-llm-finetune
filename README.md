@@ -7,7 +7,7 @@ Fine-tuning Llama 3.2 3B on a medical question-answering dataset using LoRA/PEFT
 ![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFD21E?style=flat&logo=huggingface&logoColor=black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Week%202%20Complete-brightgreen?style=flat)
+![Status](https://img.shields.io/badge/Status-Week%203%20Complete-brightgreen?style=flat)
 
 ---
 
@@ -21,15 +21,21 @@ This is not a production medical AI. It is a complete, end-to-end fine-tuning pi
 
 ---
 
-## The Problem
+## The Result So Far
 
-General-purpose LLMs produce medically plausible text that is not always clinically accurate. Asked about the early symptoms of type 2 diabetes, a base Llama 3.2 3B model responded:
+The clearest measure of progress is a single question asked before and after fine-tuning.
+
+**Base model (Week 1), asked about early symptoms of type 2 diabetes:**
 
 > "When your body produces more insulin, it can cause your body to hold onto more water, leading to increased thirst."
 
-That mechanism is wrong. Increased thirst in diabetes is caused by high blood glucose pulling fluid from tissues through osmosis, not insulin. The model arrived there through superficial pattern matching on co-occurring keywords in general web text.
+That mechanism is wrong. Increased thirst is caused by high blood glucose pulling fluid from tissues, not insulin.
 
-Fine-tuning on curated medical data penalizes these correlations and anchors responses to verified clinical pathways. That is what this project tests and demonstrates.
+**Fine-tuned model (Week 3), same question:**
+
+> "Increased thirst and urination: High blood sugar levels can cause the body to produce more urine, leading to dehydration and increased thirst."
+
+The hallucination is gone, and the filler preamble the base model opened every answer with ("As a medical assistant, I'd be happy to help...") is gone across all test responses.
 
 ---
 
@@ -38,53 +44,51 @@ Fine-tuning on curated medical data penalizes these correlations and anchors res
 | Decision | Choice | Reasoning |
 |---|---|---|
 | Base model | Llama 3.2 3B Instruct | Capable enough for meaningful baselines, small enough for free-tier GPU |
-| Fine-tuning method | LoRA via PEFT | Trains 1-5% of parameters, feasible on T4 VRAM |
+| Fine-tuning method | LoRA via PEFT (r=16, alpha=32) | Trains 0.23% of parameters, feasible on T4 VRAM |
 | Quantization | 4-bit NF4 via BitsAndBytes | Reduces model footprint from ~12GB to ~2GB |
-| Dataset | ChatDoctor HealthCareMagic 100k | Conversational prose format, matches target output style, real engineering cleaning problem |
-| Training compute | Google Colab T4 GPU (15.8GB VRAM) | Cloud-hosted GPU, right size for this scale |
+| Dataset | ChatDoctor HealthCareMagic 100k | Conversational prose format, matches target output style |
+| Training compute | Kaggle T4 GPU (15.6GB VRAM) | Free, 12-hour session limit |
 | Deployment | FastAPI + Docker + Hugging Face Hub | Reproducible, public, callable |
-
----
-
-## Dataset Decision
-
-The original plan used `lavita/medical-qa-datasets` with the `medical_meadow_medqa` subset. Inspecting the samples revealed it was the wrong shape: outputs were USMLE multiple choice answer selections, not clinical prose. Training on it would produce a model that selects answer letters, not one that answers patient questions.
-
-**ChatDoctor HealthCareMagic 100k** was chosen for three specific reasons. First, the output format matches the goal: conversational prose responses to patient-described symptoms. PubMedQA produces yes/no research answers. MedQA is multiple choice. Neither matches the target output style. Second, it is publicly available, ungated, and immediately loadable. Augmented chain-of-thought versions of MedQA do not exist as clean public datasets and would require GPT-4 generation to create, introducing a proprietary dependency. Third, the cleaning problem is real and representative: filtering 112k noisy forum rows to 45k usable samples is closer to production data engineering than loading a pre-sanitised benchmark.
 
 ---
 
 ## Progress
 
 **Week 1 (complete)**
-- Development environment configured on Colab
-- Llama 3.2 3B Instruct loaded with 4-bit quantization
-- Baseline inference confirmed working across 5 medical test questions
-- Baseline outputs saved to `results/baseline_outputs.txt` for post-training comparison
-- Identified one factual hallucination in baseline (diabetes symptom mechanism)
+- Environment configured, Llama 3.2 3B loaded with 4-bit quantization
+- Baseline inference across 5 medical test questions
+- Identified a factual hallucination in the baseline (diabetes symptom mechanism)
 
 **Week 2 (complete)**
-- Identified and switched from wrong dataset (USMLE multiple choice) to correct dataset (ChatDoctor conversational prose)
-- Built cleaning pipeline: 112,165 raw rows filtered to 45,205 clean samples
-- Removed platform filler from output openings and closings
-- Removed platform name artifacts from inputs
-- Sampled 10,000 rows with seed=42 for reproducibility
-- Formatted into Llama 3.2 chat template
-- Token length distribution confirmed: average 261 tokens, max 794, zero samples over 1024
-- max_seq_length set to 512 (only 1.1% of samples exceed it)
-- Train/eval split: 9,000 train, 1,000 eval
+- Switched from a multiple-choice dataset to ChatDoctor conversational prose
+- Built a cleaning pipeline: 112,165 raw rows filtered to 45,205 clean samples
+- Sampled 10,000, formatted into the Llama 3.2 chat template, split 90/10
 - Cleaned dataset published to Hugging Face Hub
 
-**Week 3 (planned)**
-- Configure LoRA adapters via PEFT
-- Set up SFTTrainer training loop
-- First fine-tuning run on T4
-- Compare outputs against Week 1 baseline
+**Week 3 (complete)**
+- Configured LoRA adapters via PEFT and SFTTrainer training loop
+- Worked through a BFloat16 / fp16 gradient scaler conflict on T4; migrated Colab to Kaggle
+- Trained 1 epoch over 4,937 samples, 309 steps, ~73 minutes
+- Eval loss declined 2.558 to 2.495 with no overfitting
+- Fine-tuned adapter weights published to Hugging Face Hub
+- Baseline hallucination fixed; residual errors honestly documented
 
-**Weeks 4 to 6 (planned)**
-- Week 4: Larger run with tuned hyperparameters, add second dataset, track failure modes
-- Week 5: Push model to Hugging Face Hub, build FastAPI inference endpoint, containerise with Docker
-- Week 6: Final README, blog post series, interview summary
+**Week 4 (in progress)**
+- Switch to Llama's built-in pad token to shrink the adapter file
+- Tighter data cleaning, second dataset (WikiDoc) for factual grounding
+- Full dataset, 2 epochs, reproducible training seed
+- Quantitative evaluation: base vs fine-tuned perplexity, greedy-decoded comparison
+
+**Weeks 5 to 6 (planned)**
+- Week 5: FastAPI inference endpoint, Docker containerisation, public deployment
+- Week 6: Final blog series, interview summary, repo polish
+
+---
+
+## Artifacts
+
+- **Fine-tuned model:** [nicholas-ugbala-hf/llama-3.2-3b-medical-finetuned](https://huggingface.co/nicholas-ugbala-hf/llama-3.2-3b-medical-finetuned)
+- **Cleaned dataset:** [nicholas-ugbala-hf/chatdoctor-cleaned-10k](https://huggingface.co/datasets/nicholas-ugbala-hf/chatdoctor-cleaned-10k)
 
 ---
 
@@ -94,13 +98,13 @@ The original plan used `lavita/medical-qa-datasets` with the `medical_meadow_med
 healthcare-llm-finetune/
 ├── notebooks/
 │   ├── week1_baseline.ipynb         # Model loading, tokenization, baseline inference
-│   └── week2_data_prep.ipynb        # Dataset cleaning, formatting, train/eval split
+│   ├── week2_data_prep.ipynb        # Dataset cleaning, formatting, train/eval split
+│   └── week3_finetuning.ipynb       # LoRA config, training, baseline comparison
 ├── results/
-│   └── baseline_outputs.txt         # Pre-training model outputs on 5 test questions
+│   ├── baseline_outputs.txt         # Pre-training outputs on 5 test questions
+│   └── finetuned_outputs.txt        # Post-training outputs on the same 5 questions
 ├── data/
 │   └── README.md                    # Dataset documentation
-├── src/
-│   └── api/                         # FastAPI inference endpoint (Week 5)
 └── README.md
 ```
 
@@ -111,36 +115,31 @@ healthcare-llm-finetune/
 **Requirements**
 
 - Python 3.11+
-- A Hugging Face account with access to `meta-llama/Llama-3.2-3B-Instruct` (gated model, request access at huggingface.co/meta-llama/Llama-3.2-3B-Instruct)
-- Google Colab with T4 GPU runtime, or a local GPU with at least 8GB VRAM
+- A Hugging Face account with access to `meta-llama/Llama-3.2-3B-Instruct` (gated)
+- A T4 GPU (Kaggle free tier or Colab)
 
-**Install dependencies**
+**Install**
 
 ```bash
 pip install transformers bitsandbytes accelerate peft trl datasets huggingface_hub
 ```
 
-**Authenticate with Hugging Face**
+**Load the fine-tuned model**
 
 ```python
-from huggingface_hub import login
-login()
-```
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+from peft import PeftModel
 
-**Run Week 1 baseline notebook**
-
-Open `notebooks/week1_baseline.ipynb` in Colab. Set runtime to T4 GPU. Run all cells in order.
-
-**Run Week 2 data preparation notebook**
-
-Open `notebooks/week2_data_prep.ipynb` in Colab. The cleaned dataset is also available directly on Hugging Face Hub and can be loaded without re-running the cleaning pipeline:
-
-```python
-from datasets import load_dataset
-
-dataset  = load_dataset("nicholas-ugbala-hf/chatdoctor-cleaned-10k")
-train_dataset = dataset['train']
-eval_dataset  = dataset['eval']
+base = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-3.2-3B-Instruct",
+    quantization_config=BitsAndBytesConfig(load_in_4bit=True),
+    device_map="auto",
+    torch_dtype=torch.float16,
+)
+tokenizer = AutoTokenizer.from_pretrained("nicholas-ugbala-hf/llama-3.2-3b-medical-finetuned")
+model = PeftModel.from_pretrained(base, "nicholas-ugbala-hf/llama-3.2-3b-medical-finetuned")
+model.eval()
 ```
 
 ---
@@ -150,21 +149,21 @@ eval_dataset  = dataset['eval']
 - **Model:** meta-llama/Llama-3.2-3B-Instruct
 - **Fine-tuning:** LoRA via PEFT, supervised fine-tuning via TRL SFTTrainer
 - **Quantization:** BitsAndBytes 4-bit NF4
-- **Dataset:** lavita/ChatDoctor-HealthCareMagic-100k (cleaned, 10k subset)
-- **Cleaned dataset:** [your-username/chatdoctor-cleaned-10k on Hugging Face]
-- **Training runtime:** Google Colab T4 GPU
+- **Dataset:** lavita/ChatDoctor-HealthCareMagic-100k (cleaned subset)
+- **Training runtime:** Kaggle T4 GPU
 - **Inference API:** FastAPI (planned, Week 5)
 - **Containerisation:** Docker (planned, Week 5)
-- **Model hosting:** Hugging Face Hub (planned, Week 5)
+- **Model hosting:** Hugging Face Hub
 
 ---
 
 ## Writing
 
-Each week has a corresponding article documenting the decisions made and what the results showed.
+Each week has a corresponding article documenting the decisions made and the results.
 
 - Week 1: Setup, model loading, quantization, tokenization, baseline results [link](https://dev.to/nicholas-ugbala-dev/fine-tuning-llama-32-3b-on-medical-qa-week-1-setup-and-baseline-inference-3k25)
 - Week 2: Dataset selection, cleaning pipeline, formatting, train/eval split [link](https://dev.to/nicholas-ugbala-dev/fine-tuning-llama-32-3b-on-medical-qa-week-2-data-preparation-393n-temp-slug-518945?preview=4eb4e6003bc460941fe8f8442251582e2a6f33ed121a757230ca4820aa3d7d4d7b8494a8c8cc861f9982d63872aa98f28710286c1798528f7d2c1f90)
+- Week 3: LoRA configuration, the training run, hardware debugging, before/after results [link](https://dev.to/nicholas-ugbala-dev/fine-tuning-llama-32-3b-on-medical-qa-week-3-the-first-training-run-14pl)
 
 ---
 

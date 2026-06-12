@@ -1,6 +1,6 @@
 import nbformat
 
-notebook_path = "./notebooks/week2_data_prep.ipynb"
+notebook_path = "notebooks/week3_finetuning.ipynb"
 
 with open(notebook_path, "r") as f:
     nb = nbformat.read(f, as_version=4)

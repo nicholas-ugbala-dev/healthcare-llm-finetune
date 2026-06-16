@@ -1,0 +1,48 @@
+FINE-TUNED MODEL OUTPUTS (greedy decoding)
+============================================================
+Q: What are the early symptoms of type 2 diabetes?
+A: The earliest signs and symptoms that may indicate Type-2 Diabetes include:
+
+1) Increased thirst (polydipsia)
+2) Frequent urination or increased urine production 
+3) Fatigue due to lack of energy from glucose metabolism.
+4) Blurred vision - This is usually caused by high blood sugar levels affecting your eye pressure which can lead to glaucoma if left untreated for long periods.
+
+5) Slow healing wounds - High Blood Sugar Levels cause damage to small vessels in body leading slow recovery time when wound heals slowly than normal person would heal it faster with proper care & nutrition.
+============================================================
+Q: What is the first-line treatment for hypertension in adults?
+A: The initial management of high blood pressure (hypertension) involves lifestyle modifications and medications to lower blood pressure levels effectively without causing any adverse effects or side reactions.
+
+Medications commonly used as an initial line include:
+
+1. ACE inhibitors - These drugs work by relaxing muscles around arteries which helps improve circulation.
+2. ARBs- Angiotensin II receptor blockers also relax muscle cells that surround artery walls but they do not have diuretic effect like ACE inhibitor does so it can be useful when patients cannot tolerate other medication due to its mildness.
+3. Beta-blockers - They help reduce heart rate thus lowering overall body temperature hence reducing BP readings too much at times leading into dizziness etcetera if taken alone though usually combined with another type above mentioned depending upon individual needs & health status conditions present during time period being treated currently!
+4. Calcium channel blocker - This class includes several types such verapamil calcium channels block action from inside out thereby preventing excessive contraction force exerted over arterial wall resulting decreased resistance against flow through vessels ultimately bringing down elevated values back towards normal range again!
+============================================================
+Q: What causes iron deficiency anemia?
+A: Iron-deficiency anemia is caused by insufficient intake of dietary iron or excessive loss through bleeding (hemorrhage), diarrhea and other gastrointestinal disorders. The most common cause in children under two years old is poor diet with inadequate amounts of vitamin C which helps to increase absorption from non-heme sources like plant foods. In adults it may be due to menstruation leading to blood loss over time as well as chronic diseases such as celiac disease where malabsorption occurs along side inflammation within small intestine causing damage so that nutrients cannot pass into bloodstream properly for transport throughout body including red cells carrying oxygen back home after picking up at lungs during breathing process. Other factors contributing include pregnancy, lactation & certain medications used against cancer treatment among others depending upon individual circumstances each person has unique set needs therefore proper management required accordingly without delay if symptoms persist despite taking appropriate measures then further evaluation needed immediately before any complications arise later down line thanks!
+============================================================
+Q: How is malaria diagnosed and treated?
+A: Malaria diagnosis involves clinical evaluation of symptoms along with laboratory tests to confirm its presence in blood cells or tissues. The following methods can be used for diagnosing Malaria:
+
+1. Microscopy - Blood smears stained using Giemsa stain under microscope show characteristic ring-shaped parasites.
+2. Rapid Diagnostic Tests (RDTs) - RDT kits detect antigens present inside infected red blood cell by antigen-antibody reaction which results into color change indicating positive result.
+
+Treatment options include:
+   * Artemisinin-based combination therapies like artemether-lumefantrine or dihydroartemisins combined with other antimalarial drugs such as chloroquine or mefloquine depending upon region-specific resistance patterns among Plasmodium species causing disease locally.
+   * Supportive care measures including hydration management according to severity level of infection & monitoring vital signs closely during recovery phase post-treatment initiation.
+============================================================
+Q: What are the warning signs of a heart attack?
+A: Warning sign for Heart Attack include:
+
+1) Chest pain or discomfort that may radiate to your arms and neck.
+2) Pain in one arm (or both).
+3) Shortness of breath with no underlying lung disease.
+4) Cold sweats.
+5) Nausea and vomiting.
+6) Dizziness or fainting.
+7) Weakness or fatigue.
+
+Please note these symptoms can also be present during other conditions like asthma, bronchitis etc., so it is always better to consult an expert if any such symptom appears suddenly without prior history. Hope this helps! Let me know if I can assist further.
+============================================================
